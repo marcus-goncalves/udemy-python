@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Query, Path, HTTPException, status
-from schemas.car import Car, CarCreate
+from fastapi.encoders import jsonable_encoder
+from schemas.car import Car, CarCreate, CarUpdate
 from database.cars import cars as cars_data
 
 max_items_per_request: int = 50
@@ -32,3 +33,15 @@ def create_car(car: Car) -> None:
 
     return CarCreate(car_id=car_id)
 
+@car_router.put("/{id}", response_model=Car, status_code=status.HTTP_202_ACCEPTED)
+def update_car(car_id: int, car: CarUpdate) -> Car:
+    old_car: dict = cars_data.get(car_id)
+    if not old_car:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    new_car: Car = car.dict(exclude_unset=True)
+    print(new_car)
+    new_car.copy(update=new_car)
+    cars_data[car_id] = jsonable_encoder(new_car)
+
+    return new_car

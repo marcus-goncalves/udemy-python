@@ -14,3 +14,12 @@ class Car(BaseModel):
 
 class CarCreate(BaseModel):
     car_id: int
+
+class CarUpdate(BaseModel):
+    company: str | None
+    model: str | None
+    year: int = Field(..., gt=min_year, le=max_year)
+    price: float | None
+    autonomous: bool | None
+    sold: list[str] | None
+    engine: str | None = "V4"
