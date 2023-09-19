@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from views.cars_routes import car_router
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -11,5 +11,5 @@ app.include_router(car_router)
 
 
 @app.route("/")
-def home() -> None:
-    return {"msg": "Hello World!"}
+def home(request: Request) -> None:
+    return templates.TemplateResponse("home.html", {"request": request, "title": "Project: Car Info"})
